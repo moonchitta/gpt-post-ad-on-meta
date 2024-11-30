@@ -1,0 +1,268 @@
+openapi: 3.1.0
+info:
+  title: Meta Ads API
+  description: API for interacting with Meta (Facebook/Instagram) Ads
+  version: 1.0.0
+servers:
+  - url: https://74b9-2407-d000-1a-e3-e0f3-8e67-542a-dae6.ngrok-free.app
+    description: Local development server
+
+paths:
+  /:
+    get:
+      operationId: getHomePage
+      summary: Welcome page
+      responses:
+        '200':
+          description: HTML content for the home page
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /create_campaign:
+    post:
+      operationId: createCampaign
+      summary: Create a new campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_name:
+                  type: string
+                  default: Default Campaign
+                objective:
+                  type: string
+                  default: APP_INSTALLS
+                status:
+                  type: string
+                  default: PAUSED
+                special_ad_categories:
+                  type: array
+                  items:
+                    type: string
+                buying_type:
+                  type: string
+                campaign_budget_optimization:
+                  type: boolean
+                spend_cap:
+                  type: integer
+      responses:
+        '200':
+          description: Campaign created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  campaign_id:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /create_ad_set:
+    post:
+      operationId: createAdSet
+      summary: Create a new ad set
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: string
+                name:
+                  type: string
+                  default: Default Ad Set
+                daily_budget:
+                  type: integer
+                  default: 100000
+                bid_amount:
+                  type: integer
+                  default: 5000
+                geo_locations:
+                  type: object
+                  properties:
+                    countries:
+                      type: array
+                      items:
+                        type: string
+                facebook_positions:
+                  type: array
+                  items:
+                    type: string
+                  default: ["feed"]
+                promoted_object:
+                  type: object
+                  properties:
+                    page_id:
+                      type: string
+                optimization_goal:
+                  type: string
+                  default: PAGE_LIKES
+                billing_event:
+                  type: string
+                  default: IMPRESSIONS
+                status:
+                  type: string
+                  default: PAUSED
+      responses:
+        '200':
+          description: Ad set created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  ad_set_id:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /create_ad_creative:
+    post:
+      operationId: createAdCreative
+      summary: Create a new ad creative
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page_id:
+                  type: string
+                link:
+                  type: string
+                image_url:
+                  type: string
+                image_hash:
+                  type: string
+                message:
+                  type: string
+                  default: Check out our latest updates!
+                call_to_action_type:
+                  type: string
+                  default: LEARN_MORE
+                creative_name:
+                  type: string
+                  default: Default Ad Creative
+                enroll_status:
+                  type: string
+                  enum: [OPT_IN, OPT_OUT]
+                  default: OPT_IN
+      responses:
+        '200':
+          description: Ad creative created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  creative_id:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /create_ad:
+    post:
+      operationId: createAd
+      summary: Create an ad
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ad_set_id:
+                  type: string
+                creative_id:
+                  type: string
+                ad_name:
+                  type: string
+                  default: Default Ad
+      responses:
+        '200':
+          description: Ad created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  ad_id:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /update_campaign_status:
+    post:
+      operationId: updateCampaignStatus
+      summary: Update the status of a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign_id:
+                  type: string
+                status:
+                  type: string
+                  default: ACTIVE
+      responses:
+        '200':
+          description: Campaign status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  campaign_id:
+                    type: string
+        '500':
+          description: Internal server error
+
+  /get_campaigns:
+    get:
+      operationId: getCampaigns
+      summary: Retrieve the list of current campaigns
+      responses:
+        '200':
+          description: List of campaigns fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  campaigns:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        status:
+                          type: string
+        '500':
+          description: Internal server error
